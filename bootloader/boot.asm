@@ -10,12 +10,14 @@ call print
 mov [BOOT_DRIVE], dl
 mov bx, 0x1000
 mov ah, 0x02
-mov al, 10
+mov al, 1
 mov ch, 0
 mov cl, 2
 mov dh, 0
 mov dl, [BOOT_DRIVE]
 int 0x13
+
+jc disk_error
 
 cli
 lgdt [gdt_descriptor]
@@ -57,5 +59,13 @@ gdt_descriptor:
     dd gdt_start
 
 BOOT_DRIVE db 0
+
+disk_error:
+    mov si, error_msg
+    call print
+    jmp $
+
+error_msg db 'DISK ERROR: Kernel not found!', 0
+
 times 510 - ($-$$) db 0
 dw 0xAA55
