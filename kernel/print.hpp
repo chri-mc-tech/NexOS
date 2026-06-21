@@ -28,6 +28,7 @@ inline void scroll() {
     for (int i = 0; i < 4000; i++) {
       vga[i] = vga[i + 320];
     }
+    cursor_offset = 4000 - (320 + cursor_offset - 4000);
   }
 }
 

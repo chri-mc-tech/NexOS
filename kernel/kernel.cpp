@@ -27,7 +27,6 @@ extern "C" void kernel_main() {
   print_warn("test warn \n");
   print_warn("test warn \n");
 
-
   print_success(int_to_string(cursor_offset));
 
   while (1);
