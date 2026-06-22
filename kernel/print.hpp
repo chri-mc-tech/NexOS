@@ -44,6 +44,24 @@ inline void scroll() {
   set_cursor();
 }
 
+inline void print_char(char c, int color = LIGHT_GREY) {
+  char *vga = (char *)0xB8000;
+
+  if (c == '\n') {
+    cursor_offset = (cursor_offset / 160 + 1) * 160;
+    set_cursor();
+    return;
+  }
+
+  vga[cursor_offset] = c;
+  vga[cursor_offset + 1] = color;
+
+  cursor_offset += 2;
+
+  scroll();
+  set_cursor();
+}
+
 inline void print(const char *str, int color = LIGHT_GREY) {
   char *vga = (char *) 0xB8000;
   int i = 0;

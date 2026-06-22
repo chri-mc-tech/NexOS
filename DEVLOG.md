@@ -9,3 +9,10 @@
 
 
 - aggiunto file DEVLOG.md
+
+
+- refactor funzione int_to_string
+
+- aggiungendo input tastiera
+- aggiunto mapping tasti
+- refactor generale

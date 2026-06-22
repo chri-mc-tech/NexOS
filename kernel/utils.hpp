@@ -1,24 +1,25 @@
 #pragma once
-
 #include <stdint.h>
 
-inline const char* int_to_string(int n) {
-  static char buf[12];
-  char* p = buf + 11;
-  bool neg = n < 0;
+inline const char* int_to_string(int number) {
+  static char buffer[12];
+  char* current_char = &buffer[11];
+  *current_char = '\0';
 
-  *p = '\0';
+  unsigned int value = (number < 0) ? -number : number;
 
   do {
-    *--p = '0' + (neg ? -(n % 10) : n % 10);
-    n /= 10;
-  } while (n);
+    *--current_char = '0' + (value % 10);
+    value /= 10;
+  } while (value > 0);
 
-  if (neg)
-    *--p = '-';
+  if (number < 0) {
+    *--current_char = '-';
+  }
 
-  return p;
+  return current_char;
 }
+
 
 inline void outb(uint16_t port, uint8_t val) {
   asm volatile ( "outb %0, %1" : : "a"(val), "Nd"(port) );
