@@ -1,5 +1,4 @@
 #pragma once
-#include <cstring>
 
 enum VGA_color {
   BLACK = 0x0,
@@ -22,17 +21,30 @@ enum VGA_color {
 
 int cursor_offset = 320;
 
-inline void scroll() {
-  char *vga = (char *) 0xB8000;
-  if (cursor_offset >= 4000) {
-    for (int i = 0; i < 4000; i++) {
-      vga[i] = vga[i + 320];
-    }
-    cursor_offset = 4000 - (320 + cursor_offset - 4000);
-  }
+inline void set_cursor() {
+  uint16_t pos = cursor_offset / 2;
+  outb(0x3D4, 0x0E);
+  outb(0x3D5, (uint8_t)((pos >> 8) & 0xFF));
+  outb(0x3D4, 0x0F);
+  outb(0x3D5, (uint8_t)(pos & 0xFF));
 }
 
-inline void print(const char *str, int color = WHITE) {
+inline void scroll() {
+  char *vga = (char *) 0xB8000;
+  while (cursor_offset >= 4000) {
+    for (int i = 0; i < 3840; i++) {
+      vga[i] = vga[i + 160];
+    }
+    for (int i = 3840; i < 4000; i += 2) {
+      vga[i] = ' ';
+      vga[i + 1] = WHITE;
+    }
+    cursor_offset -= 160;
+  }
+  set_cursor();
+}
+
+inline void print(const char *str, int color = LIGHT_GREY) {
   char *vga = (char *) 0xB8000;
   int i = 0;
 
@@ -50,6 +62,13 @@ inline void print(const char *str, int color = WHITE) {
 
   }
   scroll();
+}
+
+inline void print_info(const char *str) {
+  print("[");
+  print(" INFO ", CYAN);
+  print("] ");
+  print(str);
 }
 
 inline void print_success(const char *str) {
@@ -71,4 +90,12 @@ inline void print_error(const char *str) {
   print(" ERROR ", RED);
   print("] ");
   print(str);
+}
+
+
+inline void boot_banner() {
+  print("NexOS kernel loaded successfully\n\n", LIGHT_GREEN);
+  sleep_ms(300);
+  print("Author: chri\n", LIGHT_CYAN);
+  print("Contributors: none yet\n\n", LIGHT_CYAN);
 }
