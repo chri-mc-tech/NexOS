@@ -20,7 +20,7 @@ mov bx, 0x1000
 mov ah, 0x02
 
 ; da cambiare in base a dimensione kernel
-mov al, 4
+mov al, KERNEL_SECTORS
 
 mov ch, 0
 mov cl, 2

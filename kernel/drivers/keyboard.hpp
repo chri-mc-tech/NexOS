@@ -1,12 +1,18 @@
 #pragma once
+#include "../print.hpp"
 #include "../utils.hpp"
+#include "../shell/shell.hpp"
 
 inline char keymap[128];
 
 inline char keyboard_buffer[256];
 inline int keyboard_index = 0;
+inline int keyboard_last = 0;
+inline char keyboard_output_buffer;
+inline bool new_char = false;
 
 inline void keyboard_init() {
+
   keymap[0x1E] = 'a';
   keymap[0x30] = 'b';
   keymap[0x2E] = 'c';
@@ -48,18 +54,49 @@ inline void keyboard_init() {
   keymap[0x39] = ' ';
   keymap[0x0E] = '\b';
   keymap[0x1C] = '\n';
+
+  print_boot_success("Initialized keyboard \n");
 }
 
 inline void keyboard_buffer_update() {
-  unsigned char key = 0;
+  unsigned char key = inb(0x60);
+  char key_char = keymap[key];
 
-  key = inb(0x60);
-  if (key < 0x80) {
-    if (keymap[key] != keyboard_buffer[keyboard_index - 1]) {
-      keyboard_buffer[keyboard_index] = keymap[key];
-      keyboard_index++;
-      keyboard_buffer[keyboard_index] = '\0';
+  if (key != keyboard_last) {
+    if (key < 0x80) {
+      if (key_char == '\b') {
+        if (keyboard_index > 0) {
+          keyboard_index--;
+          keyboard_buffer[keyboard_index] = 0;
+          keyboard_output_buffer = key_char;
+        }
+        else {
+          return;
+        }
+      }
+      else if (key_char == '\0') {
+        return;
+      }
+      else {
+        keyboard_buffer[keyboard_index] = key_char;
+        keyboard_output_buffer = key_char;
+        keyboard_index++;
+      }
+      new_char = true;
     }
   }
+  keyboard_last = key;
+}
 
+inline void keyboard_print() {
+  if (new_char) {
+    new_char = false;
+    print_char(keyboard_output_buffer);
+    if (keyboard_output_buffer == '\n') {
+      keyboard_buffer[keyboard_index - 1] = '\0';
+      keyboard_index = 0;
+      command_handler(keyboard_buffer);
+      print("NexOS: ");
+    }
+  }
 }

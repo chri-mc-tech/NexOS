@@ -1,4 +1,5 @@
 #pragma once
+#include "pit.hpp"
 
 enum VGA_color {
   BLACK = 0x0,
@@ -50,6 +51,14 @@ inline void print_char(char c, int color = LIGHT_GREY) {
   if (c == '\n') {
     cursor_offset = (cursor_offset / 160 + 1) * 160;
     set_cursor();
+    scroll();
+    return;
+  }
+  if (c == '\b') {
+    cursor_offset = cursor_offset - 2;
+    vga[cursor_offset] = 0;
+    set_cursor();
+    scroll();
     return;
   }
 
@@ -72,6 +81,12 @@ inline void print(const char *str, int color = LIGHT_GREY) {
       i++;
       continue;
     }
+    if (str[i] == '\b') {
+      cursor_offset = cursor_offset - 2;
+      vga[cursor_offset] = 0;
+      set_cursor();
+      return;
+    }
     vga[cursor_offset] = str[i];
     vga[cursor_offset + 1] = color;
 
@@ -79,31 +94,32 @@ inline void print(const char *str, int color = LIGHT_GREY) {
     i++;
 
   }
+  set_cursor();
   scroll();
 }
 
-inline void print_info(const char *str) {
+inline void print_boot_info(const char *str) {
   print("[");
   print(" INFO ", CYAN);
   print("] ");
   print(str);
 }
 
-inline void print_success(const char *str) {
+inline void print_boot_success(const char *str) {
   print("[");
   print(" OK ", GREEN);
   print("] ");
   print(str);
 }
 
-inline void print_warn(const char *str) {
+inline void print_boot_warn(const char *str) {
   print("[");
   print(" WARN ", YELLOW);
   print("] ");
   print(str);
 }
 
-inline void print_error(const char *str) {
+inline void print_boot_error(const char *str) {
   print("[");
   print(" ERROR ", RED);
   print("] ");

@@ -3,17 +3,16 @@
 #include "print.hpp"
 #include "utils.hpp"
 
-extern "C" void kernel_main() {
+extern "C" [[noreturn]] void kernel_main() {
   boot_banner();
-
   keyboard_init();
-  print_success("Initialized keyboard \n");
 
+  print("NexOS: ");
 
-  while (1) {
+  while (true) {
     keyboard_buffer_update();
+    keyboard_print();
 
-    print(keyboard_buffer);
   }
 }
 

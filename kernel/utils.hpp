@@ -30,3 +30,13 @@ inline uint8_t inb(uint16_t port) {
   asm volatile ( "inb %1, %0" : "=a"(ret) : "Nd"(port) );
   return ret;
 }
+
+inline bool are_string_equals(const char* string_1, const char* string_2) {
+  if (!string_1 || !string_2) return false;
+
+  while (*string_1 && (*string_1 == *string_2)) {
+    string_1++;
+    string_2++;
+  }
+  return *string_1 == *string_2;
+}
