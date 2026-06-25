@@ -20,7 +20,7 @@ enum VGA_color {
   WHITE = 0xF
 };
 
-int cursor_offset = 320;
+inline int cursor_offset = 320;
 
 inline void set_cursor() {
   uint16_t pos = cursor_offset / 2;

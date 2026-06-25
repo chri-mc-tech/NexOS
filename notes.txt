@@ -1,0 +1,2 @@
+da fare:
+aumentare risoluzione video e creare decoder font

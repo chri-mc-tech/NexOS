@@ -7,7 +7,8 @@ extern "C" [[noreturn]] void kernel_main() {
   boot_banner();
   keyboard_init();
 
-  print("NexOS: ");
+  print("NexOS: ", LIGHT_BLUE);
+
 
   while (true) {
     keyboard_buffer_update();
