@@ -18,6 +18,7 @@ inline void command_handler(const char* command) {
     print("command not found: ");
     print(command);
     print("\n");
+    print("Type \"help\" for the list of available commands\n");
 
   }
 }

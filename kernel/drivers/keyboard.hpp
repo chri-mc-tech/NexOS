@@ -96,7 +96,7 @@ inline void keyboard_print() {
       keyboard_buffer[keyboard_index - 1] = '\0';
       keyboard_index = 0;
       command_handler(keyboard_buffer);
-      print("NexOS: ");
+      print("NexOS: ", LIGHT_BLUE);
     }
   }
 }
